@@ -55,3 +55,4 @@ yarn-error.log*
 pnpm-lock.yaml
 .env
 *.tgz
+web/node_modules/
