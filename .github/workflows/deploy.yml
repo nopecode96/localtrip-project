@@ -1,0 +1,26 @@
+name: 🚀 Deploy to VPS on Push
+
+on:
+  push:
+    branches:
+      - master  # atau 'main' jika kamu pakai main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ 47.237.137.76 }}
+          username: ${{ root }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/localtrip-project
+            git pull origin master
+            docker compose down
+            docker compose up -d --build
