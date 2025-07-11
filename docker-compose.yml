@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    container_name: postgres-localtrip
+    environment:
+      POSTGRES_DB: localtrip
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - localtrip-network
+    restart: unless-stopped
+
+  # Backend API Server
+  backend:
+    build: ./backend
+    container_name: backend-localtrip
+    depends_on:
+      - postgres
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:password123@postgres:5432/localtrip
+      - JWT_SECRET=your-super-secret-jwt-key-here
+      - PORT=3030
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - "3030:3030"
+    networks:
+      - localtrip-network
+    restart: unless-stopped
+
+  # Frontend Web Server
+  web:
+    build: ./web
+    container_name: web-localtrip
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://api.localtrip.me
+      - NEXT_PRIVATE_API_URL=http://backend:3030
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3000:3000"
+    networks:
+      - localtrip-network
+    restart: unless-stopped
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-localtrip
+    depends_on:
+      - backend
+      - web
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl/fullchain.pem:/etc/ssl/certs/fullchain.pem
+      - ./ssl/privkey.pem:/etc/ssl/private/privkey.pem
+      - ./ssl/api-fullchain.pem:/etc/ssl/certs/api-fullchain.pem
+      - ./ssl/api-privkey.pem:/etc/ssl/private/api-privkey.pem
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - localtrip-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  localtrip-network:
+    driver: bridge

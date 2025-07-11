@@ -1,13 +1,6 @@
-model TopDestination {
-  id        String   @id @default(cuid())
-  city     City     @relation(fields: [cityId], references: [id])
-  cityId   String   @unique
-  order    Int      // Untuk urutan tampil di homepage
-  imageUrl String?
-  createdAt DateTime @default(now())
-}
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -80,6 +73,15 @@ model City {
   @@unique([name, countryId])
 }
 
+model TopDestination {
+  id        String   @id @default(cuid())
+  city     City     @relation(fields: [cityId], references: [id])
+  cityId   String   @unique
+  order    Int      // Untuk urutan tampil di homepage
+  imageUrl String?
+  createdAt DateTime @default(now())
+}
+
 model Language {
   id     String  @id @default(cuid())
   name   String  @unique
@@ -104,7 +106,6 @@ model User {
 
   host         Host?
   bookings     Booking[]
-  // reviews      Review[] // Dihapus karena tidak ada relasi ke user di model Review
   wishlist     Wishlist[]
   stories      Story[]
   storyLikes   StoryLike[]
