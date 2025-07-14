@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/server.js",
   "scripts": {
-    "start": "dotenv -e .env.production -- node src/server.js",
+    "start": "dotenv -e .env -- node src/server.js",
     "start-simple": "dotenv -e .env.production -- node src/server-simple.js",
     "dev": "dotenv -e .env.development -- nodemon src/server.js"
   },

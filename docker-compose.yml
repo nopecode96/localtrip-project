@@ -5,10 +5,8 @@ services:
   postgres:
     image: postgres:15
     container_name: postgres-localtrip
-    environment:
-      POSTGRES_DB: localtrip
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password123
+    env_file:
+      - ./backend/.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -23,11 +21,8 @@ services:
     container_name: backend-localtrip
     depends_on:
       - postgres
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgresql://postgres:password123@postgres:5432/localtrip
-      - JWT_SECRET=your-super-secret-jwt-key-here
-      - PORT=3030
+    env_file:
+      - ./backend/.env
     volumes:
       - ./backend:/app
       - /app/node_modules
@@ -43,10 +38,8 @@ services:
     container_name: web-localtrip
     depends_on:
       - backend
-    environment:
-      - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=https://api.localtrip.me
-      - NEXT_PRIVATE_API_URL=http://backend:3030
+    env_file:
+      - ./web/.env
     volumes:
       - ./web:/app
       - /app/node_modules
