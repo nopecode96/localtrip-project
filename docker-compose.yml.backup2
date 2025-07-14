@@ -58,11 +58,7 @@ services:
       - backend
       - web
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro
-      - ./ssl/privkey.pem:/etc/ssl/private/privkey.pem:ro
-      - ./ssl/api-fullchain.pem:/etc/ssl/certs/api-fullchain.pem:ro
-      - ./ssl/api-privkey.pem:/etc/ssl/private/api-privkey.pem:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/www/html:/var/www/html
     ports:
       - "80:80"
